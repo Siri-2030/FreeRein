@@ -47,16 +47,16 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Admin from './pages/Admin';
-import CaseDetail from './pages/CaseDetail';
-import Cases from './pages/Cases';
-import Dashboard from './pages/Dashboard';
-import GetHelp from './pages/GetHelp';
-import Landing from './pages/Landing';
-import Profile from './pages/Profile';
-import ResourceDetail from './pages/ResourceDetail';
-import Resources from './pages/Resources';
-import SafetyPlan from './pages/SafetyPlan';
+import Admin from './pages/Admin.jsx';
+import CaseDetail from './pages/CaseDetail.jsx';
+import Cases from './pages/Cases.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import GetHelp from './pages/GetHelp.jsx';
+import Landing from './pages/Landing.jsx';
+import Profile from './pages/Profile.jsx';
+import ResourceDetail from './pages/ResourceDetail.jsx';
+import Resources from './pages/Resources.jsx';
+import SafetyPlan from './pages/SafetyPlan.jsx';
 import __Layout from './Layout.jsx';
 
 
