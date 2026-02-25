@@ -1,0 +1,79 @@
+{
+  "name": "SafetyPlan",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "default": "My Safety Plan",
+      "description": "Name for this safety plan"
+    },
+    "safe_places": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of safe places to go"
+    },
+    "emergency_contacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "relationship": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Emergency contacts"
+    },
+    "important_documents": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of important documents to keep safe"
+    },
+    "safety_steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Steps to take if in danger"
+    },
+    "support_services": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Support services contacts"
+    },
+    "personal_notes": {
+      "type": "string",
+      "description": "Additional personal notes"
+    },
+    "owner_email": {
+      "type": "string",
+      "description": "Email of the plan owner"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

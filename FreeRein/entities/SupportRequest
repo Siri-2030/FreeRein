@@ -1,0 +1,68 @@
+{
+  "name": "SupportRequest",
+  "type": "object",
+  "properties": {
+    "subject": {
+      "type": "string",
+      "description": "Brief subject of the request"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the situation"
+    },
+    "request_type": {
+      "type": "string",
+      "enum": [
+        "counselling",
+        "legal_advice",
+        "emergency",
+        "general"
+      ],
+      "description": "Type of support needed"
+    },
+    "urgency": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium",
+      "description": "Urgency level"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "assigned",
+        "in_progress",
+        "resolved",
+        "closed"
+      ],
+      "default": "pending",
+      "description": "Current status"
+    },
+    "assigned_to": {
+      "type": "string",
+      "description": "Email of assigned counsellor or legal advisor"
+    },
+    "requester_email": {
+      "type": "string",
+      "description": "Email of the person requesting help"
+    },
+    "is_anonymous": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the request is anonymous"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes from counsellor/advisor"
+    }
+  },
+  "required": [
+    "subject",
+    "request_type"
+  ]
+}
