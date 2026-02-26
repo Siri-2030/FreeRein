@@ -7,9 +7,6 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-
-// Import your new Login and Register components
-// Ensure these files exist in your @/pages directory
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 
