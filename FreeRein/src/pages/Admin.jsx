@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+
 import {
   Users, BookOpen, FileText, Plus, Pencil, Trash2,
-  Loader2, Shield, BarChart3, Eye, EyeOff
+  Shield, BarChart3, Eye, EyeOff
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import CategoryIcon, { labelMap } from '@/components/common/CategoryIcon';
@@ -114,7 +114,6 @@ function ResourceForm({ resource, onSave, onCancel }) {
 }
 
 export default function Admin() {
-  const [user, setUser] = useState(null);
   const [editingResource, setEditingResource] = useState(null);
   const [showResourceForm, setShowResourceForm] = useState(false);
   const queryClient = useQueryClient();
