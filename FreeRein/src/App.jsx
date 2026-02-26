@@ -19,9 +19,8 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   : <>{children}</>;
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin, user } = useAuth();
+  const { isLoadingAuth, isLoadingPublicSettings, authError, user } = useAuth();
 
-  // 1. Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-white">
@@ -32,31 +31,28 @@ const AuthenticatedApp = () => {
 
   return (
     <Routes>
-      {/* PUBLIC ACCESSIBLE ROUTES */}
-      <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-      <Route path="/register" element={user ? <Navigate to="/" /> : <Register />} />
+      {/* 1. Public Routes (Always accessible if not logged in) */}
+      <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/register" element={user ? <Navigate to="/" replace /> : <Register />} />
 
-      {/* AUTHENTICATION ERROR HANDLING */}
-      {authError && (
-        <>
-          {authError.type === 'user_not_registered' ? (
-            <Route path="*" element={<UserNotRegisteredError />} />
-          ) : authError.type === 'auth_required' ? (
-            // If auth is required and we aren't on login/register, redirect to login
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          ) : null}
-        </>
+      {/* 2. Handle specific Auth Errors */}
+      {authError?.type === 'user_not_registered' && (
+        <Route path="*" element={<UserNotRegisteredError />} />
       )}
 
-      {/* PROTECTED APP ROUTES */}
-      {!authError && (
+      {/* 3. Protected Routes - If no user and no specific error, redirect to login */}
+      {!user && !authError ? (
+         <Route path="*" element={<Navigate to="/login" replace />} />
+      ) : (
         <>
+          {/* Main Home Route */}
           <Route path="/" element={
             <LayoutWrapper currentPageName={mainPageKey}>
               <MainPage />
             </LayoutWrapper>
           } />
           
+          {/* Dynamic Pages from Config */}
           {Object.entries(Pages).map(([path, Page]) => (
             <Route
               key={path}
@@ -71,7 +67,7 @@ const AuthenticatedApp = () => {
         </>
       )}
 
-      {/* 404 FALLBACK */}
+      {/* 4. Catch-all for everything else */}
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
@@ -81,7 +77,7 @@ function App() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
-        <Router>
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <NavigationTracker />
           <AuthenticatedApp />
         </Router>
