@@ -44,9 +44,9 @@ export const AuthProvider = ({ children }) => {
       });
       
       try {
-        const publicSettings = await appClient.get(`/prod/public-settings/by-id/${appParams.appId}`);
-        setAppPublicSettings(publicSettings);
-        
+        const resp = await appClient.get(`/prod/public-settings/by-id/${appParams.appId}`);
+        setAppPublicSettings(resp?.data ?? resp);
+
         // If we got the app public settings successfully, check if user is authenticated
         if (appParams.token) {
           await checkUserAuth();
@@ -57,31 +57,22 @@ export const AuthProvider = ({ children }) => {
         setIsLoadingPublicSettings(false);
       } catch (appError) {
         console.error('App state check failed:', appError);
-        
+
+        const status = appError?.response?.status;
+        const data = appError?.response?.data;
+
         // Handle app-level errors
-        if (appError.status === 403 && appError.data?.extra_data?.reason) {
-          const reason = appError.data.extra_data.reason;
+        if (status === 403 && data?.extra_data?.reason) {
+          const reason = data.extra_data.reason;
           if (reason === 'auth_required') {
-            setAuthError({
-              type: 'auth_required',
-              message: 'Authentication required'
-            });
+            setAuthError({ type: 'auth_required', message: 'Authentication required' });
           } else if (reason === 'user_not_registered') {
-            setAuthError({
-              type: 'user_not_registered',
-              message: 'User not registered for this app'
-            });
+            setAuthError({ type: 'user_not_registered', message: 'User not registered for this app' });
           } else {
-            setAuthError({
-              type: reason,
-              message: appError.message
-            });
+            setAuthError({ type: reason, message: appError.message || data?.message });
           }
         } else {
-          setAuthError({
-            type: 'unknown',
-            message: appError.message || 'Failed to load app'
-          });
+          setAuthError({ type: 'unknown', message: appError.message || data?.message || 'Failed to load app' });
         }
         setIsLoadingPublicSettings(false);
         setIsLoadingAuth(false);
@@ -102,7 +93,7 @@ export const AuthProvider = ({ children }) => {
       // Now check if the user is authenticated
       setIsLoadingAuth(true);
       const currentUser = await base44.auth.me();
-      setUser(currentUser);
+      setUser(currentUser?.data ?? currentUser);
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
     } catch (error) {
@@ -111,7 +102,8 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(false);
       
       // If user auth fails, it might be an expired token
-      if (error.status === 401 || error.status === 403) {
+      const status = error?.response?.status;
+      if (status === 401 || status === 403) {
         setAuthError({
           type: 'auth_required',
           message: 'Authentication required'

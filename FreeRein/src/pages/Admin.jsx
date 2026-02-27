@@ -116,6 +116,7 @@ function ResourceForm({ resource, onSave, onCancel }) {
 export default function Admin() {
   const [editingResource, setEditingResource] = useState(null);
   const [showResourceForm, setShowResourceForm] = useState(false);
+  const [_user, setUser] = useState(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {

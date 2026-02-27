@@ -5,11 +5,12 @@ import { Link } from 'react-router-dom';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth(); // Assuming your AuthContext has a login function
+  const { navigateToLogin } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(email, password);
+    // redirect to authentication provider
+    navigateToLogin();
   };
 
   return (
@@ -25,6 +26,7 @@ export default function Login() {
               type="email"
               placeholder="Email address"
               className="block w-full rounded-md border border-slate-300 px-3 py-2 focus:border-slate-800 focus:outline-none"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
@@ -32,6 +34,7 @@ export default function Login() {
               type="password"
               placeholder="Password"
               className="block w-full rounded-md border border-slate-300 px-3 py-2 focus:border-slate-800 focus:outline-none"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />

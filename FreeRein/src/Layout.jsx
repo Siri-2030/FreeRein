@@ -18,7 +18,6 @@ import {
 import QuickExit from '@/components/common/QuickExit';
 import EmergencyBanner from '@/components/common/EmergencyBanner';
 
-const publicPages = ['Landing'];
 
 export default function Layout({ children, currentPageName }) {
   const [user, setUser] = useState(null);
@@ -33,7 +32,7 @@ export default function Layout({ children, currentPageName }) {
           const me = await base44.auth.me();
           setUser(me);
         }
-      } catch (e) {
+      } catch {
         // not logged in
       } finally {
         setLoading(false);
@@ -42,7 +41,6 @@ export default function Layout({ children, currentPageName }) {
     loadUser();
   }, []);
 
-  const isPublic = publicPages.includes(currentPageName);
   const isLanding = currentPageName === 'Landing';
   const userType = user?.user_type || 'victim';
 

@@ -5,8 +5,8 @@ import { createPageUrl } from '../utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { FileText, Search, Filter, Clock, User, ArrowRight } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FileText, Search, Clock, User, ArrowRight } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { StatusBadge, UrgencyBadge } from '@/components/common/StatusBadge';
@@ -24,7 +24,7 @@ export default function Cases() {
   const userType = user?.user_type || 'victim';
   const isAdmin = userType === 'admin' || user?.role === 'admin';
 
-  const { data: cases, isLoading } = useQuery({
+  const { data: cases, isLoading: _isLoading } = useQuery({
     queryKey: ['cases', user?.email, isAdmin],
     queryFn: () => {
       if (isAdmin) return base44.entities.SupportRequest.list('-created_date');

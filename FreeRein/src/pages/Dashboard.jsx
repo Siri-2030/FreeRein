@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
   BookOpen, ShieldCheck, MessageSquare, FileText, Phone,
-  ArrowRight, Heart, AlertTriangle, Clock
+  ArrowRight, Heart, Clock
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
