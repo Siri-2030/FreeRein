@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
-import { base44 } from '@/api/base44Client';
+import { me, isAuthenticated, logout as apiLogout } from '@/api/auth';
 import {
   ShieldCheck, LayoutDashboard, BookOpen, FileText, MessageSquare,
   Users, Menu, X, LogOut, ChevronDown, UserCircle
@@ -27,10 +27,10 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const isAuth = await base44.auth.isAuthenticated();
+        const isAuth = await isAuthenticated();
         if (isAuth) {
-          const me = await base44.auth.me();
-          setUser(me);
+          const userData = await me();
+          setUser(userData);
         }
       } catch {
         // not logged in
@@ -154,7 +154,7 @@ export default function Layout({ children, currentPageName }) {
                     <DropdownMenuSeparator />
                     <DropdownMenuItem 
                       className="text-red-600"
-                      onClick={() => base44.auth.logout()}
+                      onClick={apiLogout}
                     >
                       <LogOut className="w-4 h-4 mr-2" />
                       Log Out
@@ -163,7 +163,7 @@ export default function Layout({ children, currentPageName }) {
                 </DropdownMenu>
               ) : (
                 <Button 
-                  onClick={() => base44.auth.redirectToLogin(window.location.href)}
+                  onClick={() => window.location.href = '/login'}
                   className="bg-indigo-600 hover:bg-indigo-700 text-sm"
                 >
                   Sign In

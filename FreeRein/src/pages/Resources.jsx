@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { base44 } from '@/api/base44Client';
+import { createEntityApi } from '@/api/entities';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Search, BookOpen } from 'lucide-react';
@@ -17,10 +17,10 @@ export default function Resources() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
 
-  const { data: resources, isLoading } = useQuery({
+  const ResourceApi = createEntityApi('Resource');
+  const { data: resources = [], isLoading } = useQuery({
     queryKey: ['resources'],
-    queryFn: () => base44.entities.Resource.filter({ is_published: true }, '-priority'),
-    initialData: [],
+    queryFn: () => ResourceApi.filter({ is_published: true }, '-priority'),
   });
 
   const filtered = resources.filter(r => {

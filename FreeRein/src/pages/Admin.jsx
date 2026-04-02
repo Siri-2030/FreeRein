@@ -1,7 +1,8 @@
 // @ts-nocheck
-import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import React, { useState } from 'react';
+import { createEntityApi } from '@/api/entities';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '@/lib/AuthContext';
 
 import {
   Users, BookOpen, FileText, Plus, Pencil, Trash2,
@@ -116,35 +117,32 @@ function ResourceForm({ resource, onSave, onCancel }) {
 export default function Admin() {
   const [editingResource, setEditingResource] = useState(null);
   const [showResourceForm, setShowResourceForm] = useState(false);
-  const [_user, setUser] = useState(null);
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
-  useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
-  }, []);
-
-  const { data: resources } = useQuery({
+  const ResourceApi = createEntityApi('Resource');
+  const { data: resources = [] } = useQuery({
     queryKey: ['admin-resources'],
-    queryFn: () => base44.entities.Resource.list('-priority'),
-    initialData: [],
+    queryFn: () => ResourceApi.list('-priority'),
   });
 
-  const { data: allRequests } = useQuery({
+  const SupportRequestApi = createEntityApi('SupportRequest');
+  const { data: allRequests = [] } = useQuery({
     queryKey: ['admin-requests'],
-    queryFn: () => base44.entities.SupportRequest.list('-created_date'),
-    initialData: [],
+    queryFn: () => SupportRequestApi.list('-created_date'),
   });
 
-  const { data: users } = useQuery({
+  const UserApi = createEntityApi('User');
+  const { data: users = [] } = useQuery({
     queryKey: ['admin-users'],
-    queryFn: () => base44.entities.User.list(),
-    initialData: [],
+    queryFn: () => UserApi.list(),
   });
 
   const saveResourceMutation = useMutation({
     mutationFn: (data) => {
-      if (editingResource) return base44.entities.Resource.update(editingResource.id, data);
-      return base44.entities.Resource.create(data);
+      const ResourceApi = createEntityApi('Resource');
+      if (editingResource) return ResourceApi.update(editingResource.id, data);
+      return ResourceApi.create(data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-resources'] });
@@ -155,7 +153,10 @@ export default function Admin() {
   });
 
   const deleteResourceMutation = useMutation({
-    mutationFn: (id) => base44.entities.Resource.delete(id),
+    mutationFn: (id) => {
+      const ResourceApi = createEntityApi('Resource');
+      return ResourceApi.delete(id);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-resources'] });
       toast.success('Resource deleted');

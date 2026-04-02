@@ -1,9 +1,10 @@
 // @ts-nocheck
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { base44 } from '@/api/base44Client';
+import { createEntityApi } from '@/api/entities';
 import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/lib/AuthContext';
 import { motion } from 'framer-motion';
 import {
   BookOpen, ShieldCheck, MessageSquare, FileText, Phone,
@@ -15,33 +16,29 @@ import { StatusBadge, UrgencyBadge } from '@/components/common/StatusBadge';
 import CategoryIcon, { labelMap } from '@/components/common/CategoryIcon';
 
 export default function Dashboard() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
-  }, []);
+  const { user } = useAuth();
 
   const userType = user?.user_type || 'victim';
 
-  const { data: recentResources } = useQuery({
+  const ResourceApi = createEntityApi('Resource');
+  const { data: recentResources = [] } = useQuery({
     queryKey: ['resources-recent'],
-    queryFn: () => base44.entities.Resource.filter({ is_published: true }, '-priority', 4),
-    initialData: [],
+    queryFn: () => ResourceApi.filter({ is_published: true }, '-priority', 4),
   });
 
-  const { data: myRequests } = useQuery({
+  const SupportRequestApi = createEntityApi('SupportRequest');
+  const { data: myRequests = [] } = useQuery({
     queryKey: ['my-requests'],
     queryFn: async () => {
       if (!user) return [];
       if (userType === 'victim') {
-        return base44.entities.SupportRequest.filter({ requester_email: user.email }, '-created_date', 5);
+        return SupportRequestApi.filter({ requester_email: user.email }, '-created_date', 5);
       }
       if (userType === 'counsellor' || userType === 'legal_advisor') {
-        return base44.entities.SupportRequest.filter({ assigned_to: user.email }, '-created_date', 5);
+        return SupportRequestApi.filter({ assigned_to: user.email }, '-created_date', 5);
       }
-      return base44.entities.SupportRequest.list('-created_date', 10);
+      return SupportRequestApi.list('-created_date', 10);
     },
-    initialData: [],
     enabled: !!user,
   });
 
