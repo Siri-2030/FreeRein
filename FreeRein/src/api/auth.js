@@ -1,38 +1,19 @@
-import api from './client.js';
+import { authAPI } from './index.js';
 
+// Backwards compatibility - extend authAPI with isAuthenticated (since index.js authAPI lacks it)
 export const authApi = {
-  async me() {
-    const response = await api.get('/auth/me');
-    return response.data;
-  },
-
-  async login(email, password) {
-    const response = await api.post('/auth/login', { email, password });
-    return response.data; // {token, user?}
-  },
-
-  async register(userData) {
-    const response = await api.post('/auth/register', userData);
-    return response.data;
-  },
-
-  async logout() {
+  ...authAPI,
+  isAuthenticated: async () => {
     try {
-      await api.post('/auth/logout');
-    } catch {} // ignore errors
-    localStorage.removeItem('base44_access_token');
-    localStorage.removeItem('token');
-  },
-
-  async isAuthenticated() {
-    try {
-      await me();
+      await authAPI.me();
       return true;
     } catch {
       return false;
     }
-  },
+  }
 };
 
+// Destructure for direct usage
 export const { me, login, register, logout, isAuthenticated } = authApi;
 
+export default authApi;

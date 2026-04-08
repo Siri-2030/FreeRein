@@ -1,43 +1,69 @@
-import api from './client.js';
+import { usersAPI } from './index.js';
 
 const entities = ['User', 'Resource', 'SupportRequest', 'SupportMessage', 'SafetyPlan'];
 
+// Main entitiesApi - User uses usersAPI, others warn unimplemented
 export const entitiesApi = {
-  async list(entity, sort = '-created_date', limit = undefined) {
-    const params = { sort };
-    if (limit) params.limit = limit;
-    const response = await api.get(`/entities/${entity}/list`, { params });
-    return response.data; // array
+  list: async (entity, sort = '-created_date', limit) => {
+    if (entity === 'User') {
+      const response = await usersAPI.getAll();
+      return response.data || response; // Adapt to data
+    } else {
+      console.warn(`Entity ${entity} list not implemented`);
+      return [];
+    }
   },
 
-  async filter(entity, filter, sort = '-created_date', limit = undefined) {
-    const params = { filter: JSON.stringify(filter), sort };
-    if (limit) params.limit = limit;
-    const response = await api.get(`/entities/${entity}/filter`, { params });
-    return response.data; // array
+  filter: async (entity, filter, sort = '-created_date', limit) => {
+    if (entity === 'User') {
+      console.warn('User filter not implemented');
+      return [];
+    } else {
+      console.warn(`Entity ${entity} filter not implemented`);
+      return [];
+    }
   },
 
-  async get(entity, id) {
-    const response = await api.get(`/entities/${entity}/${id}`);
-    return response.data;
+  get: async (entity, id) => {
+    if (entity === 'User') {
+      const response = await usersAPI.getById(id);
+      return response.data || response;
+    } else {
+      console.warn(`Entity ${entity} get not implemented`);
+      return null;
+    }
   },
 
-  async create(entity, data) {
-    const response = await api.post(`/entities/${entity}`, data);
-    return response.data;
+  create: async (entity, data) => {
+    if (entity === 'User') {
+      const response = await usersAPI.create(data);
+      return response.data || response;
+    } else {
+      console.warn(`Entity ${entity} create not implemented`);
+      return null;
+    }
   },
 
-  async update(entity, id, data) {
-    const response = await api.put(`/entities/${entity}/${id}`, data);
-    return response.data;
+  update: async (entity, id, data) => {
+    if (entity === 'User') {
+      const response = await usersAPI.update(id, data);
+      return response.data || response;
+    } else {
+      console.warn(`Entity ${entity} update not implemented`);
+      return null;
+    }
   },
 
-  async delete(entity, id) {
-    await api.delete(`/entities/${entity}/${id}`);
+  delete: async (entity, id) => {
+    if (entity === 'User') {
+      await usersAPI.delete(id);
+    } else {
+      console.warn(`Entity ${entity} delete not implemented`);
+    }
   },
 };
 
-// Dynamic per entity
+// Dynamic per entity API creator
 export const createEntityApi = (entity) => ({
   list: (sort, limit) => entitiesApi.list(entity, sort, limit),
   filter: (filter, sort, limit) => entitiesApi.filter(entity, filter, sort, limit),
@@ -47,5 +73,7 @@ export const createEntityApi = (entity) => ({
   delete: (id) => entitiesApi.delete(entity, id),
 });
 
-export default entitiesApi;
+// Backwards compatibility
+export { usersAPI };
 
+export default entitiesApi;

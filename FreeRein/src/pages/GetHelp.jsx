@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { authApi } from '@/api/auth';
+import { entitiesApi } from '@/api/entities';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
@@ -26,7 +27,7 @@ export default function GetHelp() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
+    authApi.me().then(setUser).catch(() => {});
   }, []);
 
   const [form, setForm] = useState({
@@ -37,22 +38,20 @@ export default function GetHelp() {
     is_anonymous: false,
   });
 
-  const { data: requests } = useQuery({
+  const { data: requests = [] } = useQuery({
     queryKey: ['my-help-requests', user?.email],
-    queryFn: () => base44.entities.SupportRequest.filter({ requester_email: user.email }, '-created_date'),
+    queryFn: () => entitiesApi.filter('SupportRequest', { requester_email: user.email }),
     enabled: !!user,
-    initialData: [],
   });
 
-  const { data: messages } = useQuery({
+  const { data: messages = [] } = useQuery({
     queryKey: ['request-messages', selectedRequest?.id],
-    queryFn: () => base44.entities.SupportMessage.filter({ request_id: selectedRequest.id, is_internal: false }, 'created_date'),
+    queryFn: () => entitiesApi.filter('SupportMessage', { request_id: selectedRequest.id, is_internal: false }),
     enabled: !!selectedRequest,
-    initialData: [],
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.SupportRequest.create({ ...data, requester_email: user.email }),
+    mutationFn: (data) => entitiesApi.create('SupportRequest', { ...data, requester_email: user.email }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['my-help-requests'] });
       setView('list');
@@ -62,7 +61,7 @@ export default function GetHelp() {
   });
 
   const sendMessageMutation = useMutation({
-    mutationFn: (content) => base44.entities.SupportMessage.create({
+    mutationFn: (content) => entitiesApi.create('SupportMessage', {
       request_id: selectedRequest.id,
       content,
       sender_email: user.email,

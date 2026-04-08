@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { base44 } from '@/api/base44Client';
+import { authApi } from '@/api/auth';
+import { entitiesApi } from '@/api/entities';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { FileText, Search, Clock, User, ArrowRight } from 'lucide-react';
@@ -18,20 +19,21 @@ export default function Cases() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
+    authApi.me().then(setUser).catch(() => {});
   }, []);
 
   const userType = user?.user_type || 'victim';
   const isAdmin = userType === 'admin' || user?.role === 'admin';
 
-  const { data: cases, isLoading: _isLoading } = useQuery({
+  const { data: cases = [], isLoading: _isLoading } = useQuery({
     queryKey: ['cases', user?.email, isAdmin],
-    queryFn: () => {
-      if (isAdmin) return base44.entities.SupportRequest.list('-created_date');
-      return base44.entities.SupportRequest.filter({ assigned_to: user.email }, '-created_date');
+    queryFn: async () => {
+      if (isAdmin) {
+        return await entitiesApi.list('SupportRequest', '-created_date');
+      }
+      return await entitiesApi.filter('SupportRequest', { assigned_to: user.email });
     },
     enabled: !!user,
-    initialData: [],
   });
 
   const filtered = cases.filter(c => {

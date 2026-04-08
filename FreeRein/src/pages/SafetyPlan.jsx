@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { authApi } from '@/api/auth';
+import { entitiesApi } from '@/api/entities';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
@@ -79,14 +80,13 @@ export default function SafetyPlan() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
+    authApi.me().then(setUser).catch(() => {});
   }, []);
 
-  const { data: plans } = useQuery({
+  const { data: plans = [] } = useQuery({
     queryKey: ['safety-plans', user?.email],
-    queryFn: () => base44.entities.SafetyPlan.filter({ owner_email: user.email }),
+    queryFn: () => entitiesApi.filter('SafetyPlan', { owner_email: user.email }),
     enabled: !!user,
-    initialData: [],
   });
 
   const existingPlan = plans[0];
@@ -126,9 +126,9 @@ export default function SafetyPlan() {
       data.support_services = data.support_services.filter(c => c.name || c.phone);
 
       if (existingPlan) {
-        return base44.entities.SafetyPlan.update(existingPlan.id, data);
+        return entitiesApi.update('SafetyPlan', existingPlan.id, data);
       }
-      return base44.entities.SafetyPlan.create(data);
+      return entitiesApi.create('SafetyPlan', data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['safety-plans'] });

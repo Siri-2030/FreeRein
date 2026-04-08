@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { base44 } from '@/api/base44Client';
+import { authApi } from '@/api/auth';
+import { entitiesApi } from '@/api/entities';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Send, Clock, User, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,25 +24,24 @@ export default function CaseDetail() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => {});
-  }, []);
+    authApi.me().then(setUser).catch(() => {});
+  }, []); // Fixed - authApi already imported
 
   const userType = user?.user_type || 'victim';
 
   const { data: request, isLoading } = useQuery({
     queryKey: ['case', id],
     queryFn: async () => {
-      const results = await base44.entities.SupportRequest.filter({ id });
+      const results = await entitiesApi.filter('SupportRequest', { id });
       return results[0] || null;
     },
     enabled: !!id,
   });
 
-  const { data: messages } = useQuery({
+  const { data: messages = [] } = useQuery({
     queryKey: ['case-messages', id],
-    queryFn: () => base44.entities.SupportMessage.filter({ request_id: id }, 'created_date'),
+    queryFn: () => entitiesApi.filter('SupportMessage', { request_id: id }),
     enabled: !!id,
-    initialData: [],
   });
 
   const updateMutation = useMutation({

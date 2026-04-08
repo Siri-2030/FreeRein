@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { base44 } from '@/api/base44Client';
+import { entitiesApi } from '@/api/entities';
 import { useQuery } from '@tanstack/react-query';
 import ReactMarkdown from 'react-markdown';
 import { ArrowLeft, Calendar, Tag } from 'lucide-react';
@@ -19,7 +19,7 @@ export default function ResourceDetail() {
   const { data: resource, isLoading } = useQuery({
     queryKey: ['resource', id],
     queryFn: async () => {
-      const results = await base44.entities.Resource.filter({ id });
+      const results = await entitiesApi.filter('Resource', { id });
       return results[0] || null;
     },
     enabled: !!id,

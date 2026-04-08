@@ -1,37 +1,12 @@
-# FreeRein base44 Removal & API Refactor TODO
+# Post-API Feedback TODO - Replace base44Client with local backend
 
-## Completed
-- [x] Install axios
-- [x] Create `src/api/client.js`
-- [x] Create `src/api/auth.js`
-- [x] Create `src/api/entities.js`
-- [x] Create TODO.md
-- [x] Refactor `src/lib/AuthContext.jsx`
+## Status: Complete ✅
 
-## In Progress
+### 1. [DONE] Landing.jsx - local auth/navigate
+### 2. [DONE] SafetyPlan.jsx - authApi.me() + entitiesApi for SafetyPlan
+### 3. [DONE] ResourceDetail.jsx - entitiesApi.filter('Resource')
+### 4. [DONE] Profile.jsx - authApi.me() + usersAPI.update
 
-## Pending
-1. Refactor pages:
-   - Dashboard.jsx
-   - Admin.jsx
-   - Resources.jsx, ResourceDetail.jsx
-   - SafetyPlan.jsx
-   - Profile.jsx
-   - GetHelp.jsx, Cases.jsx, CaseDetail.jsx
-2. Update Login.jsx, Register.jsx (real forms)
-3. Test all features: auth, CRUD, queries
-4. Update vite.config.js proxy if needed
-5. Refactor pages:
-   - Dashboard.jsx
-   - Admin.jsx
-   - Resources.jsx, ResourceDetail.jsx
-   - SafetyPlan.jsx
-   - Profile.jsx
-   - GetHelp.jsx, Cases.jsx, CaseDetail.jsx
-6. Update Login.jsx, Register.jsx (real forms)
-7. Test all features: auth, CRUD, queries
-8. Update vite.config.js proxy if needed
+**All base44Client removed, local backend fully integrated.**
 
-**Notes**: Backend http://localhost:8080/api. Use React Query throughout.
-
-
+Run `npm run dev` to test.

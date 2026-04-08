@@ -1,8 +1,8 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { base44 } from '@/api/base44Client';
+import { authApi } from '@/api/auth';
 import { motion } from 'framer-motion';
 import {
   ShieldCheck, ArrowRight, Phone, Heart, Scale,
@@ -51,10 +51,11 @@ const features = [
 ];
 
 export default function Landing() {
-  const [isAuth, setIsAuth] = useState(false);
+const [isAuth, setIsAuth] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    base44.auth.isAuthenticated().then(setIsAuth).catch(() => {});
+    authApi.isAuthenticated().then(setIsAuth).catch(() => {});
   }, []);
 
   return (
@@ -81,13 +82,13 @@ export default function Landing() {
                 <Button
                   variant="ghost"
                   className="text-white/90 hover:text-white hover:bg-white/10"
-                  onClick={() => base44.auth.redirectToLogin()}
+                  onClick={() => navigate('/login')}
                 >
                   Sign In
                 </Button>
                 <Button
                   className="bg-white text-indigo-700 hover:bg-white/90 font-semibold"
-                  onClick={() => base44.auth.redirectToLogin()}
+                  onClick={() => navigate('/login')}
                 >
                   Get Help Now
                 </Button>
@@ -150,14 +151,14 @@ export default function Landing() {
               custom={3}
               className="mt-10 flex flex-col sm:flex-row gap-4"
             >
-              <Button 
-                size="lg"
-                className="bg-white text-indigo-700 hover:bg-white/90 font-semibold text-base px-8 h-13"
-                onClick={() => base44.auth.redirectToLogin()}
-              >
-                Access Resources
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
+                <Button 
+                  size="lg"
+                  className="bg-white text-indigo-700 hover:bg-white/90 font-semibold text-base px-8 h-13"
+                  onClick={() => navigate('/login')}
+                >
+                  Access Resources
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
               <a href="tel:181">
                 <Button 
                   size="lg" 

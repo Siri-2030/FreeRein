@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { authApi } from '@/api/auth';
+import { usersAPI } from '@/api/index.js';
 import { useMutation } from '@tanstack/react-query';
 import { UserCircle, Save, Loader2, Mail } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,7 +23,7 @@ export default function Profile() {
   });
 
   useEffect(() => {
-    base44.auth.me().then(u => {
+    authApi.me().then(u => {
       setUser(u);
       setForm({
         phone: u.phone || '',
@@ -34,7 +35,14 @@ export default function Profile() {
   }, []);
 
   const saveMutation = useMutation({
-    mutationFn: (data) => base44.auth.updateMe(data),
+    mutationFn: async (data) => {
+      // Merge current user data + updates
+      const updateData = {
+        ...user,
+        ...data,
+      };
+      return usersAPI.update(user.id, updateData);
+    },
     onSuccess: () => toast.success('Profile updated'),
   });
 
