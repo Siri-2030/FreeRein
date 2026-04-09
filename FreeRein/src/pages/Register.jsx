@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../lib/AuthContext'
 import { useNavigate, Link } from 'react-router-dom'
 import { User, Mail, Lock, ShieldCheck } from 'lucide-react'
@@ -9,20 +9,26 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
-    userType: 'VICTIM'
+    confirmPassword: '',
+    role: 'VICTIM'
   })
+  const [passwordsMatch, setPasswordsMatch] = useState(true)
   const { register, registerLoading } = useAuth()
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match. Please try again.')
+      return
+    }
     
     try {
       await register({
         name: formData.name.trim(),
         email: formData.email.trim(),
         password: formData.password,
-        userType: formData.userType.toUpperCase()  // ✅ userType (matches DTO)
+        userType: formData.role.toUpperCase()  // ✅ userType (matches DTO)
       })
       toast.success('Account created successfully!')
       navigate('/')
@@ -32,6 +38,11 @@ const Register = () => {
       console.error('Register Error:', error.response?.data)
     }
   }
+
+  // Real-time password match validation
+  useEffect(() => {
+    setPasswordsMatch(formData.password === formData.confirmPassword)
+  }, [formData.password, formData.confirmPassword])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -105,13 +116,41 @@ const Register = () => {
               </div>
             </div>
 
+            {/* Confirm Password */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  minLength={6}
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                  disabled={registerLoading}
+                  className={`w-full pl-11 pr-4 py-3 rounded-xl focus:ring-2 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed ${
+                    passwordsMatch 
+                      ? 'border border-gray-200 focus:ring-primary-500' 
+                      : 'border-red-300 focus:ring-red-500 bg-red-50'
+                  }`}
+                  placeholder="Confirm your password"
+                />
+              </div>
+              {!passwordsMatch && (
+                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                  <Lock className="h-4 w-4" /> Passwords do not match
+                </p>
+              )}
+            </div>
+
             {/* userType Dropdown - BACKEND REQUIRES THIS */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">User Type</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
               <select
-                name="userType"
-                value={formData.userType}
-                onChange={(e) => setFormData({...formData, userType: e.target.value})}
+                name="role"
+                value={formData.role}
+                onChange={(e) => setFormData({...formData, role: e.target.value})}
                 disabled={registerLoading}
                 className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{ 

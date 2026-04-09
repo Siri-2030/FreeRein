@@ -57,6 +57,8 @@ import Profile from './pages/Profile.jsx';
 import ResourceDetail from './pages/ResourceDetail.jsx';
 import Resources from './pages/Resources.jsx';
 import SafetyPlan from './pages/SafetyPlan.jsx';
+import Chat from './pages/Chat.jsx';
+import EvidenceVault from './pages/EvidenceVault.jsx';
 import __Layout from './Layout.jsx';
 
 
@@ -71,6 +73,8 @@ export const PAGES = {
     "ResourceDetail": ResourceDetail,
     "Resources": Resources,
     "SafetyPlan": SafetyPlan,
+    "Chat": Chat,
+    "EvidenceVault": EvidenceVault,
 }
 
 export const pagesConfig = {

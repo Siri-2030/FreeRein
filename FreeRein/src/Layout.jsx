@@ -1,10 +1,10 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from './utils';
-import { me, isAuthenticated, logout as apiLogout } from '@/api/auth';
+import { useAuth } from '@/lib/AuthContext';
 import {
-  ShieldCheck, LayoutDashboard, BookOpen, FileText, MessageSquare,
+  ShieldCheck, LayoutDashboard, BookOpen, FileText, MessageSquare, MessageCircle, Lock,
   Users, Menu, X, LogOut, ChevronDown, UserCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,30 +15,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { toast } from 'react-hot-toast';
 import QuickExit from '@/components/common/QuickExit';
 import EmergencyBanner from '@/components/common/EmergencyBanner';
 
 
 export default function Layout({ children, currentPageName }) {
-  const [user, setUser] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { logout, logoutLoading, user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const isAuth = await isAuthenticated();
-        if (isAuth) {
-          const userData = await me();
-          setUser(userData);
-        }
-      } catch {
-        // not logged in
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadUser();
+    setLoading(false);
   }, []);
 
   const isLanding = currentPageName === 'Landing';
@@ -53,13 +42,16 @@ export default function Layout({ children, currentPageName }) {
 
     if (userType === 'victim') {
       items.push({ label: 'Get Help', icon: MessageSquare, page: 'GetHelp' });
+      items.push({ label: 'Chat', icon: MessageCircle, page: 'Chat' });
+      items.push({ label: 'Evidence Vault', icon: Lock, page: 'EvidenceVault' });
     }
 
-    if (userType === 'counsellor' || userType === 'legal_advisor' || userType === 'admin' || user?.role === 'admin') {
+    if (userType === 'COUNSELLOR' || userType === 'LEGAL_ADVISOR' || userType === 'admin' || user?.role === 'admin') {
       items.push({ label: 'Cases', icon: FileText, page: 'Cases' });
+      items.push({ label: 'Chat', icon: MessageCircle, page: 'Chat' });
     }
 
-    if (userType === 'admin' || user?.role === 'admin') {
+    if (userType === 'ADMIN' || user?.role === 'admin') {
       items.push({ label: 'Admin', icon: Users, page: 'Admin' });
     }
 
@@ -153,11 +145,22 @@ export default function Layout({ children, currentPageName }) {
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem 
-                      className="text-red-600"
-                      onClick={apiLogout}
+                      className="text-red-600 focus:text-red-600"
+                      onClick={async () => {
+                        try {
+                          await logout();
+                          toast.success('Logged out successfully');
+                          navigate('/login');
+                        } catch (error) {
+                          toast.error('Logout failed. Clearing session.');
+                          localStorage.removeItem('token');
+                          navigate('/login');
+                        }
+                      }}
+                      disabled={logoutLoading}
                     >
                       <LogOut className="w-4 h-4 mr-2" />
-                      Log Out
+                      {logoutLoading ? 'Logging out...' : 'Log Out'}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

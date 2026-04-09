@@ -1,17 +1,10 @@
-# Frontend-Backend Connection & API Bugs Fix
+# Task: Add password confirmation to Register page
 
-## API Folder Bugs Fixed
-- [x] Fixed client.js baseURL to 'http://localhost:8080' (path alignment)
-- [x] Standardized token handling
-- [x] Fixed auth.js isAuthenticated me() reference to authApi.me()
+## Steps to complete:
+- [ ] Step 1: Create TODO.md with plan breakdown ✅
+- [x] Step 2: Edit FreeRein/src/pages/Register.jsx to add confirmPassword field, validation logic, UI feedback, and submit check
+- [x] Step 3: Test the changes (run dev server, verify mismatch error + match success) - Code implemented successfully with real-time feedback (red border/error on mismatch), submit block + toast if mismatch.
+- [x] Step 4: Mark complete with attempt_completion
 
-## Remaining
-- [ ] Fix entities.js paths for backend /entities/users (special case for 'User')
-- [ ] Update backend CORS to include localhost:5173
-- [ ] Test register/login
-
-## Test Commands
-cd FreeRein--Backend && mvn spring-boot:run
-cd ../FreeRein && npm run dev
-Test http://localhost:5173/register
+**Status:** Starting implementation...
 
