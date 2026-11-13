@@ -1,0 +1,63 @@
+{
+  "name": "Resource",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Title of the resource"
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of the resource"
+    },
+    "content": {
+      "type": "string",
+      "description": "Full content/body of the resource in markdown"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "legal_rights",
+        "support_services",
+        "health_safety",
+        "financial_aid",
+        "housing",
+        "children_family",
+        "emergency"
+      ],
+      "description": "Category of the resource"
+    },
+    "target_audience": {
+      "type": "string",
+      "enum": [
+        "all",
+        "victims",
+        "counsellors",
+        "legal_advisors"
+      ],
+      "default": "all",
+      "description": "Who this resource is intended for"
+    },
+    "is_published": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the resource is published and visible"
+    },
+    "priority": {
+      "type": "number",
+      "default": 0,
+      "description": "Display priority (higher = shown first)"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tags for filtering"
+    }
+  },
+  "required": [
+    "title",
+    "category"
+  ]
+}
