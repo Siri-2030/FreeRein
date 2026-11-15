@@ -46,12 +46,12 @@ export default function Layout({ children, currentPageName }) {
       items.push({ label: 'Evidence Vault', icon: Lock, page: 'EvidenceVault' });
     }
 
-    if (userType === 'COUNSELLOR' || userType === 'LEGAL_ADVISOR' || userType === 'admin' || user?.role === 'admin') {
+    if (['counsellor', 'legal_advisor', 'admin'].includes(userType)) {
       items.push({ label: 'Cases', icon: FileText, page: 'Cases' });
       items.push({ label: 'Chat', icon: MessageCircle, page: 'Chat' });
     }
 
-    if (userType === 'ADMIN' || user?.role === 'admin') {
+    if (userType === 'admin') {
       items.push({ label: 'Admin', icon: Users, page: 'Admin' });
     }
 
@@ -150,7 +150,7 @@ export default function Layout({ children, currentPageName }) {
                         try {
                           await logout();
                           toast.success('Logged out successfully');
-                          navigate('/login');
+                          navigate('/');
                         } catch (error) {
                           toast.error('Logout failed. Clearing session.');
                           localStorage.removeItem('token');
@@ -166,7 +166,7 @@ export default function Layout({ children, currentPageName }) {
                 </DropdownMenu>
               ) : (
                 <Button 
-                  onClick={() => window.location.href = '/login'}
+                  onClick={() => navigate('/login')}
                   className="bg-indigo-600 hover:bg-indigo-700 text-sm"
                 >
                   Sign In

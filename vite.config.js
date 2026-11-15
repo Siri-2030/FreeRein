@@ -15,11 +15,12 @@ export default defineConfig({
     },
   },
   server: {
+    port: 5173,
     proxy: {
+      // dev: browser calls /api/... on :5173, Vite forwards to the Spring Boot backend
       '/api': {
-        target: 'http://localhost:8080',
+        target: process.env.VITE_PROXY_TARGET || 'http://localhost:8080',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/api')
       }
     }
   }

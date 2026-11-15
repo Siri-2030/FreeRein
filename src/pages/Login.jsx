@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '@/lib/AuthContext' 
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { Mail, Lock } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
@@ -11,6 +11,8 @@ const Login = () => {
   })
   const { login, loginLoading } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const redirectTo = location.state?.from || '/Dashboard'
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -21,9 +23,11 @@ const Login = () => {
         password: formData.password
       })
       toast.success('Login successful!')
-      navigate('/')
+      navigate(redirectTo, { replace: true })
     } catch (error) {
-      const message = error.response?.data?.message || 'Invalid credentials'
+      const message = error.response?.status === 401
+        ? 'Incorrect email or password'
+        : (error.response?.data?.message || (error.code === 'ERR_NETWORK' ? 'Cannot reach the server. Please try again.' : 'Login failed'))
       toast.error(message)
       console.error('Login Error:', error.response?.data)
     }
@@ -33,8 +37,8 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <div className="mx-auto h-20 w-20 bg-primary-100 rounded-2xl flex items-center justify-center">
-            <Mail className="h-10 w-10 text-primary-600" />
+          <div className="mx-auto h-20 w-20 bg-indigo-100 rounded-2xl flex items-center justify-center">
+            <Mail className="h-10 w-10 text-indigo-600" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
             Sign in to FreeRein
@@ -54,7 +58,7 @@ const Login = () => {
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
                   disabled={loginLoading}
-                  className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="your@email.com"
                 />
               </div>
@@ -71,7 +75,7 @@ const Login = () => {
                   value={formData.password}
                   onChange={(e) => setFormData({...formData, password: e.target.value})}
                   disabled={loginLoading}
-                  className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="••••••••"
                 />
               </div>
@@ -81,7 +85,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loginLoading}
-            className="btn-primary w-full py-3 font-medium text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition-colors w-full py-3 font-medium text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loginLoading ? (
               <>
@@ -93,8 +97,9 @@ const Login = () => {
             )}
           </button>
 
-          <div className="text-center">
-            <Link to="/register" className="text-primary-600 hover:text-primary-700 font-medium">
+          <div className="text-center space-y-2">
+            <Link to="/" className="block text-sm text-gray-500 hover:text-gray-700">&larr; Back to home</Link>
+            <Link to="/register" className="text-indigo-600 hover:text-indigo-700 font-medium">
               Create new account
             </Link>
           </div>

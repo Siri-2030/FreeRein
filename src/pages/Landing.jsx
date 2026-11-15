@@ -1,8 +1,8 @@
 // @ts-nocheck
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { authApi } from '@/api/auth';
+import { useAuth } from '@/lib/AuthContext';
 import { motion } from 'framer-motion';
 import {
   ShieldCheck, ArrowRight, Phone, Heart, Scale,
@@ -51,12 +51,9 @@ const features = [
 ];
 
 export default function Landing() {
-const [isAuth, setIsAuth] = useState(false);
+  const { user } = useAuth();
+  const isAuth = !!user;
   const navigate = useNavigate();
-
-  useEffect(() => {
-    authApi.isAuthenticated().then(setIsAuth).catch(() => {});
-  }, []);
 
   return (
     <div className="min-h-screen">
@@ -88,7 +85,7 @@ const [isAuth, setIsAuth] = useState(false);
                 </Button>
                 <Button
                   className="bg-white text-indigo-700 hover:bg-white/90 font-semibold"
-                  onClick={() => navigate('/login')}
+                  onClick={() => navigate('/register')}
                 >
                   Get Help Now
                 </Button>
@@ -154,7 +151,7 @@ const [isAuth, setIsAuth] = useState(false);
                 <Button 
                   size="lg"
                   className="bg-white text-indigo-700 hover:bg-white/90 font-semibold text-base px-8 h-13"
-                  onClick={() => navigate('/login')}
+                  onClick={() => navigate(isAuth ? '/Resources' : '/register')}
                 >
                   Access Resources
                   <ArrowRight className="w-5 h-5 ml-2" />

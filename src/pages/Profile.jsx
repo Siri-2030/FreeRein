@@ -1,7 +1,6 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { authApi } from '@/api/auth';
-import { usersAPI } from '@/api/index.js';
 import { useMutation } from '@tanstack/react-query';
 import { UserCircle, Save, Loader2, Mail } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -36,14 +35,16 @@ export default function Profile() {
 
   const saveMutation = useMutation({
     mutationFn: async (data) => {
-      // Merge current user data + updates
-      const updateData = {
-        ...user,
-        ...data,
-      };
-      return usersAPI.update(user.id, updateData);
+      return authApi.updateProfile({
+        name: user.full_name,
+        phone: data.phone,
+        bio: data.bio,
+        specialization: data.specialization,
+        available: data.is_available,
+      });
     },
     onSuccess: () => toast.success('Profile updated'),
+    onError: () => toast.error('Could not save your profile'),
   });
 
   const userType = user?.user_type || 'victim';
