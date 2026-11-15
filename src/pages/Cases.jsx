@@ -23,7 +23,7 @@ export default function Cases() {
   }, []);
 
   const userType = user?.user_type || 'victim';
-  const isAdmin = userType === 'admin' || user?.role === 'admin';
+  const isAdmin = userType === 'admin';
 
   const { data: cases = [], isLoading: _isLoading } = useQuery({
     queryKey: ['cases', user?.email, isAdmin],
@@ -31,7 +31,9 @@ export default function Cases() {
       if (isAdmin) {
         return await entitiesApi.list('SupportRequest', '-created_date');
       }
-      return await entitiesApi.filter('SupportRequest', { assigned_to: user.email });
+      // staff: my assigned cases + new requests nobody has picked up yet
+      const all = await entitiesApi.list('SupportRequest', '-created_date');
+      return all.filter(c => c.assigned_to === user.email || !c.assigned_to);
     },
     enabled: !!user,
   });
@@ -54,7 +56,7 @@ export default function Cases() {
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Cases</h1>
         <p className="text-slate-500 mt-1">
-          {isAdmin ? 'Manage all support requests.' : 'Your assigned cases.'}
+          {isAdmin ? 'Manage all support requests.' : 'Your assigned cases and new requests waiting for someone to help.'}
         </p>
       </div>
 

@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../lib/AuthContext';
 import { evidenceAPI } from '../api/evidence.js';
-import { usersAPI } from '../api/index.js';
 import { Shield, Plus, Trash2, Upload, FileText, Image as ImageIcon, Film, Mic, Calendar } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
@@ -20,7 +19,7 @@ export default function EvidenceVault() {
 
   const { data: evidence = [] } = useQuery({
     queryKey: ['evidence', user?.email],
-    queryFn: () => evidenceAPI.getEvidence().then(res => res.data || res.data.data || []),
+    queryFn: () => evidenceAPI.getEvidence(),
     enabled: !!user,
   });
   const isLoading = false;

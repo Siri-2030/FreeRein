@@ -2,13 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../lib/AuthContext';
 import { chatAPI } from '../api/chat.js';
-import { usersAPI } from '../api/index.js';
 
 import { toast } from 'react-hot-toast';
-import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Input } from '../components/ui/input';
-import { MessageCircle, Send, Loader2, Plus, Search, X, UserPlus } from 'lucide-react';
+import { MessageCircle, Send, Loader2, Plus } from 'lucide-react';
 
 export default function Chat() {
   const { user } = useAuth();
@@ -22,7 +18,7 @@ export default function Chat() {
 
   const { data: allUsers } = useQuery({
     queryKey: ['users'],
-    queryFn: () => usersAPI.getAll().then(res => res.data || res.data.data || []),
+    queryFn: () => chatAPI.getContacts(),
   });
 
   useEffect(() => {
@@ -62,7 +58,7 @@ export default function Chat() {
       setMessage('');
       queryClient.invalidateQueries({ queryKey: ['chat', conversationId] });
     },
-    onError: () => toast.error('Failed to send message'),
+    onError: (e) => toast.error(e?.response?.data?.message || 'Failed to send message'),
   });
 
   const handleSend = () => {
@@ -73,7 +69,7 @@ export default function Chat() {
   if (!user) return <div>Loading...</div>;
 
   return (
-    <div className="flex h-screen bg-slate-50">
+    <div className="flex h-[calc(100vh-11rem)] min-h-[420px] bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden">
       {/* Contacts */}
       <div className="w-80 border-r border-slate-200 flex flex-col">
         <div className="p-4 border-b bg-white flex items-center justify-between">
@@ -103,7 +99,7 @@ export default function Chat() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-slate-800 truncate">{contact.name}</p>
-                <p className="text-xs text-slate-500 capitalize">{contact.role}</p>
+                <p className="text-xs text-slate-500 capitalize">{contact.role?.toLowerCase().replace('_', ' ')}</p>
               </div>
             </button>
           ))}
@@ -124,7 +120,7 @@ export default function Chat() {
           <>
             <div className="p-4 border-b bg-white sticky top-0 z-10 flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold">
-                {selectedContact.name[0]}
+                {selectedContact.name?.[0]}
               </div>
               <div>
                 <p className="font-semibold">{selectedContact.name}</p>

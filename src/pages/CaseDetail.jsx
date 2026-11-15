@@ -45,20 +45,25 @@ export default function CaseDetail() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data) => base44.entities.SupportRequest.update(id, data),
+    mutationFn: (data) => entitiesApi.update('SupportRequest', id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['case', id] });
+      queryClient.invalidateQueries({ queryKey: ['cases'] });
       toast.success('Case updated');
+    },
+    onError: () => {
+      toast.error('Could not update the case');
     },
   });
 
   const sendMessageMutation = useMutation({
-    mutationFn: (data) => base44.entities.SupportMessage.create(data),
+    mutationFn: (data) => entitiesApi.create('SupportMessage', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['case-messages'] });
       setNewMessage('');
       setInternalNote('');
     },
+    onError: () => toast.error('Could not send the message'),
   });
 
   if (isLoading) {
@@ -170,6 +175,13 @@ export default function CaseDetail() {
                     id="assign-input"
                     placeholder="counsellor@email.com"
                   />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => updateMutation.mutate({ assigned_to: user?.email, status: 'assigned' })}
+                  >
+                    Assign to me
+                  </Button>
                   <Button
                     variant="outline"
                     size="sm"

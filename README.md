@@ -1,19 +1,63 @@
-# FreeRein Full Stack App
+# FreeRein
 
-## Setup
-1. **Backend** (FreeRein--Backend): `cd FreeRein--Backend && mvnw spring-boot:run`
-   - Runs on http://localhost:8080/api
-   - Swagger: http://localhost:8080/swagger-ui.html
-   - DB: MySQL FreeRein_db (update application.properties)
+## Project Overview
 
-2. **Frontend** (FreeRein): `cd FreeRein && npm install && npm run dev`
-   - Runs on http://localhost:5173
-   - /api calls auto-proxy to backend 8080/api
+FreeRein is a safety and support platform designed to help victims access resources, manage safety plans, communicate with counsellors, and securely manage evidence.
 
-## Connection
-- Vite proxy configured for seamless API calls.
-- Old backend (FreeRein-backend) deprecated.
+## Technology Stack
 
-## Test
-Open frontend, perform API actions (login/register) – check Network tab.
+- React
+- Vite
+- JavaScript
+- Tailwind CSS
 
+## Frontend Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Siri-2030/FreeRein.git
+cd FreeRein
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+
+Create a `.env` file using `.env.example` as a reference.
+
+Configure `VITE_API_URL` with the backend API base URL.
+
+### 4. Start the development server
+
+```bash
+npm run dev
+```
+
+### 5. Build for production
+
+```bash
+npm run build
+```
+
+## Backend
+
+The backend is maintained in a separate repository:
+
+Repository: https://github.com/Siri-2030/FreeRein--BackendRepo
+
+Production API: https://freerein-backendrepo.onrender.com/
+
+## Deployment
+
+- Frontend: Vercel
+- Backend: Render
+- Database: Neon PostgreSQL
+
+## Important
+
+Do not commit `.env` files or private credentials to GitHub.
